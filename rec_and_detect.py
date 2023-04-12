@@ -3,6 +3,7 @@ import wave
 import whisper
 import cv2
 import cv2.data
+import pyttsx3
 
 
 CHUNK_SIZE = 1024
@@ -11,8 +12,10 @@ CHANNELS = 1
 RATE = 44100
 SECONDS = 5
 
-def record_audio(p):
-    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK_SIZE)
+def record_audio():
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,  output_device_index=0, frames_per_buffer=CHUNK_SIZE)
 
     frames = []
     print('recorded started')
@@ -24,8 +27,7 @@ def record_audio(p):
     stream.stop_stream()
     stream.close()
     p.terminate()
-
-    return frames
+    store_input(frames, p, 'input2')
 
 def store_input(frames, p, filepath):
     file = wave.open(f"{filepath}.wav", "wb")
@@ -48,7 +50,10 @@ def decode_input(filepath, model):
     
 
 def main():
-    p = pyaudio.PyAudio()
+    
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
     model = whisper.load_model('base')
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -69,16 +74,30 @@ def main():
             if detected_counter >= 30:
                 break
         
-        
+        if cv2.waitKey(1) == ord('q'):
+            break
 
         
 
     cap.release()
     cv2.destroyAllWindows()
-    input = record_audio(p)
-    store_input(input, p, 'input1')
+    engine.say('Please tell me the degrees you wish')
+    engine.runAndWait()
+    record_audio()
+    #store_input(input, p, 'input1')
     dec_input = decode_input('input1.wav', model=model)
+    
     print(f'Decoded Input: {dec_input}')
+    engine.say(f"Did you say {dec_input} ?")
+    engine.runAndWait()
+
+    record_audio()
+    #store_input(input, p, 'input2')
+    dec_input = decode_input('input2.wav', model=model)
+    print(dec_input)
+    if str(dec_input).lower().__contains__('yes'):
+        engine.say('Okay !')
+        engine.runAndWait()
 
         
 
