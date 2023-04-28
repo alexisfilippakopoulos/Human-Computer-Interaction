@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
 
-class First_Frame(QtWidgets.QWidget):
+class Second_Frame(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
@@ -11,19 +11,30 @@ class First_Frame(QtWidgets.QWidget):
         movie_label.setFixedSize(800, 600)
         movie.start()
 
-        washer_icon = QIcon('assets/washer.png')
-        dryer_icon = QIcon('assets/dryer1.png')
+        center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #72bcd4;}'
+        lower_button_style = 'QPushButton { border: 2px solid red; border-radius: 10px; background-color: white;}'
 
         header_font = self.create_font('Arial', 15, True, True, 75)
         button_font = self.create_font('Arial', 10, True, True, 75)
 
-        pushButton = self.create_button(QtCore.QRect(70, 100, 261, 360), header_font, 'WASHER' , 'pushButton', washer_icon)
-        pushButton2 = self.create_button(QtCore.QRect(470, 100, 251, 360), header_font, 'DRYER', 'pushButton2', dryer_icon)
+        light_button = self.create_button(QtCore.QRect(70, 100, 180, 360), header_font, 'LIGHT' , 'light_button', center_button_style)
+        dark_button = self.create_button(QtCore.QRect(310, 100, 180, 360), header_font, 'DARK', 'dark_button', center_button_style)
+        mix_button = self.create_button(QtCore.QRect(550, 100, 180, 360), header_font, 'MIXED', 'mix_button', center_button_style)
+        back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), header_font, 'BACK', 'back_button', lower_button_style)
+        exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), header_font, 'EXIT', 'exit_button', lower_button_style)
 
+        back_button.clicked.connect(self.back_clicked)
+        exit_button.clicked.connect(self.exit_clickled)
 
-        header = self.create_label(QtCore.QRect(280, 20, 271, 41), header_font, 'WASHER OR DRYER ?', 'header')
+        header = self.create_label(QtCore.QRect(180, 20, 471, 41), header_font, "WHAT'S THE COLOR OF YOUR LOAD ?", 'header')
 
-        pushButton_3 = self.create_button(QtCore.QRect(330, 490, 141, 51), button_font, 'VOICE\nASSISTANT', 'pushButton3')
+        exit = self.create_label(QtCore.QRect(440, 505, 50, 50), header_font, '', 'exit_img')
+        self.bind_label_to_pixmap(exit, 'assets/exit.png')
+
+        back = self.create_label(QtCore.QRect(80, 507.5, 45, 45), header_font, '', 'back_img')
+        self.bind_label_to_pixmap(back, 'assets/back.png')
+        
+        
 
 
     def create_font(self, family, size, bold: bool, italic: bool, weight):
@@ -35,13 +46,13 @@ class First_Frame(QtWidgets.QWidget):
         font.setWeight(weight)
         return font
     
-    def create_button(self, geom, font, text, name, icon=None):
+    def create_button(self, geom, font, text, name, style_sheet, icon=None):
         pushButton = QtWidgets.QPushButton(self)
         pushButton.setGeometry(QtCore.QRect(geom))
         pushButton.setIcon(icon) if icon != None else None
         pushButton.setFont(font)
         pushButton.setObjectName(name)
-        pushButton.setStyleSheet("background-color: #D3D3D3")
+        pushButton.setStyleSheet(style_sheet)
         pushButton.setText(text)
         return pushButton
     
@@ -52,4 +63,15 @@ class First_Frame(QtWidgets.QWidget):
         label.setText(text)
         label.setObjectName(name)
         return label
+    
+    def bind_label_to_pixmap(self, label, img_path):
+        pixmap = QPixmap(img_path)
+        pixmap = pixmap.scaled(label.size(), aspectRatioMode=True)
+        label.setPixmap(pixmap)
+        
+    def exit_clickled(self):
+        self.parent().setCurrentIndex(0)
+
+    def back_clicked(self):
+        self.parent().setCurrentIndex(1)
 
