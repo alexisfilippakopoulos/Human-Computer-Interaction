@@ -47,23 +47,23 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_exit_buttons(self):
         self.first_frame.exit_button.clicked.connect(self.exit_functionality)
         self.second_frame.exit_button.clicked.connect(self.exit_functionality)
-        self.choices.clear()
 
     def activate_back_buttons(self):
-        self.first_frame.back_button.clicked.connect(self.back_functionality)
-        self.second_frame.back_button.clicked.connect(self.back_functionality)
-        #self.choices.pop()
+        self.first_frame.back_button.clicked.connect(lambda: self.back_functionality(self.stacked_widget.currentIndex()))
+        self.second_frame.back_button.clicked.connect(lambda: self.back_functionality(self.stacked_widget.currentIndex()))
 
     def second_frame_functionality(self):
         self.second_frame.light_button.clicked.connect(lambda: self.add_choice('light'))
         self.second_frame.dark_button.clicked.connect(lambda: self.add_choice('dark'))
         self.second_frame.mix_button.clicked.connect(lambda: self.add_choice('mix'))
 
-    def back_functionality(self):
-        self.choices.pop()
-        self.show_first_frame()
+    def back_functionality(self, widget_index):
+        # Show previous screen and pop last choice
+        self.stacked_widget.setCurrentIndex(widget_index - 1)
+        self.choices.pop() if len(self.choices) != 0 else None
 
     def exit_functionality(self):
+        # Clear the list and show starting screen
         self.choices.clear()
         self.show_starting_frame()
 
