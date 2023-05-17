@@ -1,4 +1,4 @@
-intro:Hello, this is the EasyWash Voice Assistance. Do you wish to be assisted?
+intro:Hello, this is the EasyWash Voice Assistance. Do you wish me to help you?
 answ_1_no:Okay!
 answ_1_yes:Would you like me to recommend you a cycle, or use your own?
 answ_2_no:Okay. I will walk you through choosing your own cycle.
@@ -9,3 +9,9 @@ answ_3_2: So time is not a problem.  What is the prominent color of your laundry
 answ_4_light: Light colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?
 answ_4_dark: Dark colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?
 answ_4_mixed: Mixed colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?
+answ_5_sensitive: So, you have mostly sensitive garments ! What about the size of your laundry? Is it relatively small, medium, or large?
+answ_5_plain: So, you have mostly plain garments ! What about the size of your laundry? Is it relatively small, medium, or large?
+answ_5_heavy: So, you have mostly heavy garments ! What about the size of your laundry? Is it relatively small, medium, or large?
+answ_6_small: Small laundry! This will be quick! 
+answ_6_medium: Medium laundry! Just enough for a wash! 
+answ_6_large: Large laundry! This is the best practice! 
