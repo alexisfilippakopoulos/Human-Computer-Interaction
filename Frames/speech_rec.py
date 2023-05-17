@@ -19,7 +19,7 @@ class Speech_Recognition(QtCore.QObject, threading.Thread):
 
     def __init__(self):
         super().__init__()
-        self.model = whisper.load_model('base')
+        self.model = whisper.load_model('base.en')
         self.result_queue = queue.Queue()
 
     def run(self):
@@ -68,7 +68,7 @@ class Speech_Recognition(QtCore.QObject, threading.Thread):
         input = whisper.load_audio(file=FILEPATH)
         input = whisper.pad_or_trim(input)
         mel = whisper.log_mel_spectrogram(input).to(self.model.device)
-        options = whisper.DecodingOptions(fp16=False)
+        options = whisper.DecodingOptions(fp16=False, language='ja')
         result = whisper.decode(model=self.model, mel=mel, options=options)
         self.speech_signal.emit()
         self.result_queue.put(result.text)

@@ -45,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist', 'do'], 'no' : ['no', 'nope', 'not', "n't"]}
         self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'do', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
-        self.second_frame_eval_dict = {0: ['first', 'one','sixty', '1', '60', 'less', 'hour'], 1: ['two', '2', 'second', 'less', 'hours'], 3: ['third', 'three', 'more', 'plus', 'hours', 'or']}
+        self.second_frame_eval_dict = {0: ['first', 'one','sixty', '1', '60', 'less', 'hour'], 1: ['two', '2', 'second', 'less', 'hours'], 2: ['third', 'three', 'more', 'plus', 'hours', 'or']}
         self.third_frame_eval_dict = {'light': ['light', 'white', 'gray', 'soft'], 'dark': ['black', 'dark', 'heavy'], 'mixed': ['mixed', 'both']}
         self.fourth_frame_eval_dict = {'sensitive': ['light', 'sensitive'], 'plain': ['clothes', 'plain', 'cotton'], 'heavy': ['heavy', 'jacket']}
         self.fifth_frame_eval_dict = {'small': ['small', 'little'], 'medium': ['medium'], 'large': ['large', 'lot']}
@@ -158,8 +158,13 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Transition from first recommendation question to the next frame using the buttons.
         """
-        self.first_frame.recomm_button.clicked.connect(self.show_second_frame)
-        self.first_frame.my_button.clicked.connect(self.show_second_frame)
+        self.first_frame.recomm_button.clicked.connect(self.first_frame_button_functionality)
+        self.first_frame.my_button.clicked.connect(self.first_frame_button_functionality)
+    
+    def first_frame_button_functionality(self):
+        global assistant_flag
+        assistant_flag = False
+        self.show_second_frame()
     
     def second_frame_functionality(self):
         """
