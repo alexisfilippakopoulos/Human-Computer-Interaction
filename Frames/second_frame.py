@@ -1,11 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
 
-class Third_Frame(QtWidgets.QWidget):
+class Second_Frame(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        self.frame_index = 4
+        self.frame_index = 3
         movie = QMovie("assets\mygif.gif")
         movie_label = QtWidgets.QLabel(self)
         movie_label.setMovie(movie)
@@ -17,13 +17,13 @@ class Third_Frame(QtWidgets.QWidget):
 
         font = self.create_font('Arial', 18, True, True, 75)
 
-        self.light_button = self.create_button(QtCore.QRect(70, 100, 180, 360), font, 'LIGHT' , 'light_button', center_button_style)
-        self.dark_button = self.create_button(QtCore.QRect(310, 100, 180, 360), font, 'DARK', 'dark_button', center_button_style)
-        self.mix_button = self.create_button(QtCore.QRect(550, 100, 180, 360), font, 'MIXED', 'mix_button', center_button_style)
+        self.option_0 = self.create_button(QtCore.QRect(70, 100, 180, 360), font, '> 1\nHOUR' , '0_button', center_button_style)
+        self.option_1 = self.create_button(QtCore.QRect(310, 100, 180, 360), font, '> 2\nHOURS', '1_button', center_button_style)
+        self.option_2 = self.create_button(QtCore.QRect(550, 100, 180, 360), font, '< 3\nHOURS', '2_button', center_button_style)
         self.back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
         self.exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
 
-        header = self.create_label(QtCore.QRect(110, 20, 580, 41), font, "PROMINENT COLORING OF LAUNDRY ?", 'header')
+        header = self.create_label(QtCore.QRect(270, 20, 281, 41), font, "TIME AVAILABLE ?", 'header')
         
         
     def create_font(self, family, size, bold: bool, italic: bool, weight):

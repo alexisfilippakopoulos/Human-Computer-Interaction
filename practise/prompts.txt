@@ -1,0 +1,11 @@
+intro:Hello, this is the EasyWash Voice Assistance. Do you wish to be assisted?
+answ_1_no:Okay!
+answ_1_yes:Would you like me to recommend you a cycle, or use your own?
+answ_2_no:Okay. I will walk you through choosing your own cycle.
+answ_2_yes:Alright then, I will be asking you some questions. Please respond after the end of each question. If you want to go to the previous question, or start over, please say so. Lastly, if you need any explanation, please repeat the word explain. Now, let's Start by how much time do you have available. Less than one hour? Less than two hours? or, 3 plus hours?
+answ_3_0: So you have less than an hour.  What is the prominent color of your laundry? Is it light?, dark?, or mixed?
+answ_3_1: So you have less than two hours.  What is the prominent color of your laundry? Is it light?, dark?, or mixed?
+answ_3_2: So time is not a problem.  What is the prominent color of your laundry? Is it light?, dark?, or mixed?
+answ_4_light: Light colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?
+answ_4_dark: Dark colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?
+answ_4_mixed: Mixed colored it is ! What about the garment type? Is it mostly sensitive, is it mostly plain, or is it mostly heavy?

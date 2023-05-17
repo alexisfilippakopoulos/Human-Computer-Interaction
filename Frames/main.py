@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon
 from start import Starting_Screen 
 from first_frame import First_Frame
 from assistant_frame import Assistant_Frame
+from second_frame import Second_Frame
 from third_frame import Third_Frame
 from face_rec import Face_Recognition
 from speech_rec import Speech_Recognition
@@ -22,24 +23,27 @@ class MainWindow(QtWidgets.QMainWindow):
         # create a stacked widget and set it as the central widget of the main window
         self.stacked_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
-
+        self.frame_dict = {0: self.show_starting_frame, 1: self.show_assistant_frame, 2: self.show_first_frame, 3: self.show_second_frame, 4: self.show_third_frame}
         # create the screens and add them to the stacked widget
         self.start_screen = Starting_Screen()
         self.first_frame = First_Frame()
+        self.second_frame = Second_Frame()
         self.assistant_frame = Assistant_Frame()
         self.third_frame = Third_Frame()
         
         self.stacked_widget.addWidget(self.start_screen)
         self.stacked_widget.addWidget(self.assistant_frame)
         self.stacked_widget.addWidget(self.first_frame)
+        self.stacked_widget.addWidget(self.second_frame)
         self.stacked_widget.addWidget(self.third_frame)
 
         self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist', 'do'], 'no' : ['no', 'nope', 'not', "n't"]}
         self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'do', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
-        self.third_frame_eval_dict = {}
+        self.second_frame_eval_dict = {0: ['first', 'one','sixty', '1', '60', 'less', 'hour'], 1: ['two', '2', 'second', 'less', 'hours'], 3: ['third', 'three', 'more', 'plus', 'hours']}
+        self.third_frame_eval_dict = {'light': ['light', 'white', 'gray', 'soft'], 'dark': ['black', 'dark', 'heavy'], 'mixed': ['mixed', 'both']}
 
-        self.frame_to_eval_dict = { 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict}
-        self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval}
+        self.frame_to_eval_dict = { 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict, 3: self.second_frame_eval_dict , 4: self.third_frame_eval_dict}
+        self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval, 3: self.second_frame_option_eval, 4 : self.third_frame_option_eval}
         # Create a ThreadPoolExecutor with the desired number of worker threads
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
@@ -47,6 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         executor.submit(self.starting_screen_functionality)
         executor.submit(self.first_frame_functionality)
         executor.submit(self.assistant_frame_functionality)
+        executor.submit(self.second_frame_functionality)
         executor.submit(self.third_frame_functionality)
         executor.submit(self.activate_exit_buttons)
         executor.submit(self.activate_back_buttons)
@@ -72,6 +77,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.setCurrentWidget(self.first_frame)
         self.current_widget_index = self.first_frame.frame_index
 
+    def show_second_frame(self):
+        self.stacked_widget.setCurrentWidget(self.second_frame)
+        self.current_widget_index = self.second_frame.frame_index
+
     def show_third_frame(self):
         self.stacked_widget.setCurrentWidget(self.third_frame)
         self.current_widget_index = self.third_frame.frame_index
@@ -79,29 +88,40 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_exit_buttons(self):
         self.first_frame.exit_button.clicked.connect(self.exit_functionality)
         self.assistant_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.second_frame.exit_button.clicked.connect(self.exit_functionality)
         self.third_frame.exit_button.clicked.connect(self.exit_functionality)
 
     def activate_back_buttons(self):
         self.first_frame.back_button.clicked.connect(self.back_functionality)
         self.assistant_frame.back_button.clicked.connect(self.back_functionality)
+        self.second_frame.back_button.clicked.connect(self.back_functionality)
         self.third_frame.back_button.clicked.connect(self.back_functionality)
-
-    def third_frame_functionality(self):
-        self.third_frame.light_button.clicked.connect(lambda: self.add_choice('light'))
-        self.third_frame.dark_button.clicked.connect(lambda: self.add_choice('dark'))
-        self.third_frame.mix_button.clicked.connect(lambda: self.add_choice('mix'))
 
     def starting_screen_functionality(self):
         # connect the button clicked signal to a method that changes the current widget
         self.start_screen.pushButton.clicked.connect(self.show_assistant_frame)
 
-    def first_frame_functionality(self):
-        self.first_frame.recomm_button.clicked.connect(self.show_third_frame)
-        self.first_frame.my_button.clicked.connect(self.show_third_frame)
-
     def assistant_frame_functionality(self):
         self.assistant_frame.yes_button.clicked.connect(self.show_first_frame)
         self.assistant_frame.no_button.clicked.connect(self.show_first_frame)
+
+    def first_frame_functionality(self):
+        self.first_frame.recomm_button.clicked.connect(self.show_second_frame)
+        self.first_frame.my_button.clicked.connect(self.show_second_frame)
+    
+    def second_frame_functionality(self):
+        self.second_frame.option_0.clicked.connect(lambda: self.second_frame_button_functionality('0'))
+        self.second_frame.option_1.clicked.connect(lambda: self.second_frame_button_functionality('1'))
+        self.second_frame.option_2.clicked.connect(lambda: self.second_frame_button_functionality('2'))
+
+    def second_frame_button_functionality(self, option):
+        self.add_choice(option)
+        self.show_third_frame()
+
+    def third_frame_functionality(self):
+        self.third_frame.light_button.clicked.connect(lambda: self.add_choice('light'))
+        self.third_frame.dark_button.clicked.connect(lambda: self.add_choice('dark'))
+        self.third_frame.mix_button.clicked.connect(lambda: self.add_choice('mix'))
 
     def back_functionality(self):
         # Show previous screen and pop last choice
@@ -186,10 +206,26 @@ class MainWindow(QtWidgets.QMainWindow):
             # Show appropriate screen
             assist_thr = threading.Thread(target=self.voice_assistant.speak, args=('answ_2_yes',))
             assist_thr.start()
-            self.show_third_frame()
         else:
             recomm_flag = False
-            # Show appropriate screen
+            assist_thr = threading.Thread(target=self.voice_assistant.speak, args=('answ_2_no',))
+            assist_thr.start()
+        # Show appropriate screen
+        self.show_second_frame()
+
+    def second_frame_option_eval(self, option):
+        self.add_choice(option)
+        assist_thr = threading.Thread(target=self.voice_assistant.speak, args=(f'answ_3_{option}',))
+        assist_thr.start()
+        self.show_third_frame()
+
+
+    def third_frame_option_eval(self, option):
+        self.add_choice(f'{option}')
+        # Say appropriate message
+        assist_thr = threading.Thread(target=self.voice_assistant.speak, args=(f'answ_4_{option}',))
+        assist_thr.start()
+        # Show appropriate screen
 
 
 

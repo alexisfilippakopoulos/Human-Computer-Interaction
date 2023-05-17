@@ -1,5 +1,0 @@
-intro:Hello, this is the EasyWash Voice Assistance. Do you wish to be assisted?
-answ_1_no:Okay!
-answ_1_yes:Would you like me to recommend you a cycle, or use your own?
-answ_2_no:Okay. I will walk you through choosing your own cycle.
-answ_2_yes:Alright then, I will be asking you some questions. Please respond after the end of each question. If you want to go to the previous question, or start over, please say so. Lastly, if you need any explanation, please repeat the word explain. Now, let's Start by how much time do you have available. Less than, one hour? Less than, two hours? Or, 3 or more hours?
