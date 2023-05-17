@@ -1,10 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
+from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon, QPainter, QColor
 
-class Second_Frame(QtWidgets.QWidget):
+
+class First_Frame(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
+        self.frame_index = 2
         movie = QMovie("assets\mygif.gif")
         movie_label = QtWidgets.QLabel(self)
         movie_label.setMovie(movie)
@@ -14,18 +16,17 @@ class Second_Frame(QtWidgets.QWidget):
         center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #72bcd4;}'
         lower_button_style = 'QPushButton { border: 2px solid red; border-radius: 10px; background-color: white;}'
 
-        header_font = self.create_font('Arial', 15, True, True, 75)
-        button_font = self.create_font('Arial', 10, True, True, 75)
+        font = self.create_font('Arial', 18, True, True, 75)
 
-        self.light_button = self.create_button(QtCore.QRect(70, 100, 180, 360), header_font, 'LIGHT' , 'light_button', center_button_style,)
-        self.dark_button = self.create_button(QtCore.QRect(310, 100, 180, 360), header_font, 'DARK', 'dark_button', center_button_style)
-        self.mix_button = self.create_button(QtCore.QRect(550, 100, 180, 360), header_font, 'MIXED', 'mix_button', center_button_style)
-        self.back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), header_font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
-        self.exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), header_font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
+        self.recomm_button = self.create_button(QtCore.QRect(70, 100, 251, 360), font, 'PROPOSE\nCYCLE' , 'propose_button', center_button_style)
+        self.my_button = self.create_button(QtCore.QRect(470, 100, 251, 360), font, 'MY\nCYCLE' , 'my_button', center_button_style)
 
-        header = self.create_label(QtCore.QRect(180, 20, 471, 41), header_font, "WHAT'S THE COLOR OF YOUR LOAD ?", 'header')
-        
-        
+        self.back_button = self.create_button(QtCore.QRect(70, 500, 261, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
+        self.exit_button = self.create_button(QtCore.QRect(470, 500, 261, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
+
+        header = self.create_label(QtCore.QRect(200, 20, 441, 41), font, 'NEED A RECOMMENDATION ?', 'header')
+
+
     def create_font(self, family, size, bold: bool, italic: bool, weight):
         font = QtGui.QFont()
         font.setFamily(family)
@@ -56,4 +57,6 @@ class Second_Frame(QtWidgets.QWidget):
         label.setObjectName(name)
         label.setStyleSheet(stylesheet)
         return label
+        
+    
 

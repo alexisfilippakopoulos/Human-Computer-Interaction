@@ -21,6 +21,7 @@ def record_audio():
     print('recorded started')
     for i in range(0, int(RATE / CHUNK_SIZE * SECONDS)):
         data = stream.read(CHUNK_SIZE)
+        print(data)
         frames.append(data)
     print('recorded ended')
 
@@ -30,12 +31,11 @@ def record_audio():
     store_input(frames, p, 'input2')
 
 def store_input(frames, p, filepath):
-    file = wave.open(f"{filepath}.wav", "wb")
-    file.setnchannels(CHANNELS)
-    file.setsampwidth(p.get_sample_size(FORMAT))
-    file.setframerate(RATE)
-    file.writeframes(b''.join(frames))
-    file.close()
+    with wave.open(f"{filepath}.wav", "wb") as file:
+        file.setnchannels(CHANNELS)
+        file.setsampwidth(p.get_sample_size(FORMAT))
+        file.setframerate(RATE)
+        file.writeframes(b''.join(frames))
     print('recording stored')
     return
 

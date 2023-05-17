@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QMovie
 class Starting_Screen(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+        self.frame_index = 0
         movie = QMovie("assets\mygif.gif")
         movie_label = QtWidgets.QLabel(self)
         movie_label.setMovie(movie)

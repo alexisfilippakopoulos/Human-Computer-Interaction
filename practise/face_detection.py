@@ -20,7 +20,7 @@ while True:
     if len(faces) >= 1 and len(eyes) >= 2:
 
         for (ex, ey , ew, eh) in eyes:
-            #cv2.putText(frame, f"{len(faces)}, {len(eyes)}", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+            cv2.putText(frame, f"{len(faces)}, {len(eyes)}", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
             detected_counter += 1
             if detected_counter > 20:
                 cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 5)
