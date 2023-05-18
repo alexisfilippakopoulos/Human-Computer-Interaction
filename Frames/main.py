@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Track responses to use as predictors for the recommendation
         self.recommendation_choices = []
         self.voice_assistant = VoiceAssistance()
+        self.voice_assistant.activation_signal.connect(self.decode_audio)
         # create a stacked widget and set it as the central widget of the main window
         self.stacked_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
@@ -49,7 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame_eval_dict = {'light': ['light', 'white', 'gray', 'soft'], 'dark': ['black', 'dark', 'heavy'], 'mixed': ['mixed', 'both']}
         self.fourth_frame_eval_dict = {'sensitive': ['light', 'sensitive'], 'plain': ['clothes', 'plain', 'cotton'], 'heavy': ['heavy', 'jacket']}
         self.fifth_frame_eval_dict = {'small': ['small', 'little'], 'medium': ['medium'], 'large': ['large', 'lot']}
-        self.back_exit_eval_dict = {'back': ['back', 'previous', 'last'], 'exit': ['start', 'over', 'exit']}
+        self.back_exit_eval_dict = {'back': ['goback', 'back', 'previous', 'last', 'previousquestion', 'lastquestion'], 'exit': ['start', 'over', 'exit', 'beginning', 'startover', 'thestart']}
 
         self.frame_to_eval_dict = {0: self.back_exit_eval_dict, 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict, 3: self.second_frame_eval_dict , 4: self.third_frame_eval_dict, 5: self.fourth_frame_eval_dict, 6: self.fifth_frame_eval_dict}
         self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval, 3: self.second_frame_option_eval, 4 : self.third_frame_option_eval, 5: self.fourth_frame_option_eval, 6: self.fifth_frame_option_eval}
@@ -224,6 +225,8 @@ class MainWindow(QtWidgets.QMainWindow):
         print(self.recommendation_choices)
         print(f'Widget index: {self.current_widget_index} Difference: {self.current_widget_index - 1}')
         self.frame_dict[self.current_widget_index - 1]()
+        global assistant_flag
+        self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') if assistant_flag else None
 
     def exit_functionality(self):
         """
@@ -265,7 +268,6 @@ class MainWindow(QtWidgets.QMainWindow):
         Bind action that when assistant stops talking we start recording.
         Start saying appropriate prompt.
         """
-        self.voice_assistant.activation_signal.connect(self.decode_audio)
         self.voice_assistant.speak(prompt)
 
     def enable_speech_rec(self):
@@ -276,14 +278,17 @@ class MainWindow(QtWidgets.QMainWindow):
         speech_rec = Speech_Recognition()
         speech_rec.start()
         decoded_audio = speech_rec.join()
-        is_back_exit = self.evaluate_response(decoded_audio, True)
-        print('Option with flag: ', is_back_exit)
-        if is_back_exit == '0':
-            option = self.evaluate_response(decoded_audio)
-            self.frame_to_option_eval_dicts[self.current_widget_index](option)
-        elif is_back_exit == 'back':
+        decoded_audio = ''.join(decoded_audio.lower().split())
+        back_exit_eval = self.evaluate_response(decoded_audio, True)
+        # 0 signals that neither back nor exit commands where detected
+        if back_exit_eval == '0':
+            # Evaluate clients response using the question's dictionary of evaluation
+            option_eval = self.evaluate_response(decoded_audio)
+            print('Option: ', option_eval)
+            self.assist_client('repeat') if option_eval == 'None' else self.frame_to_option_eval_dicts[self.current_widget_index](option_eval)
+        elif back_exit_eval == 'back':
             self.back_functionality()
-        elif is_back_exit == 'exit':
+        elif back_exit_eval == 'exit':
             self.exit_functionality()
         
     
@@ -296,7 +301,6 @@ class MainWindow(QtWidgets.QMainWindow):
         matches_per_option = {}
         print(response)
         if back_exit_flag:
-            print('Dict to be used for eval: ', self.frame_to_eval_dict[0])
             option = '0'
             for key, value in self.frame_to_eval_dict[0].items():
                 matched_words = 0
@@ -304,7 +308,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     matched_words += 1 if response.__contains__(v) else 0
                 matches_per_option[key] = matched_words
                 print(f'Key: {key} Matched Words: {matched_words}')
-                option = key if matched_words > 0 else '0' 
+                option = key if matched_words > 0 else option
             return option
         else: 
             for key, value in self.frame_to_eval_dict[self.current_widget_index].items():
@@ -312,7 +316,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 for v in value:
                     matched_words += 1 if response.__contains__(v) else 0
                 matches_per_option[key] = matched_words
-            return max(matches_per_option, key=matches_per_option.get)
+                print(f'Key: {key} Matched Words: {matched_words}')
+            return 'None' if all(value == 0 for value in matches_per_option.values()) else max(matches_per_option, key=matches_per_option.get)
         
     def assistant_frame_option_eval(self, option):
         """
