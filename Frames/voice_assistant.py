@@ -15,6 +15,7 @@ class VoiceAssistance(QtCore.QObject):
         self.assistant.say(self.prompt_dict[prompt])
         self.assistant.runAndWait()
         self.activation_signal.emit()
+        return
 
     def load_prompts(self):
         with open('frames/prompts.txt', 'r') as file:
@@ -26,7 +27,5 @@ class VoiceAssistance(QtCore.QObject):
             prompt_dict[key.strip()] = value.strip()
         return prompt_dict
 
-    def stop_speaking(self):
-        self.assistant.stop()
 
 

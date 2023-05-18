@@ -18,7 +18,7 @@ class Fourth_Frame(QtWidgets.QWidget):
         font = self.create_font('Arial', 18, True, True, 75)
 
         self.sens_button = self.create_button(QtCore.QRect(70, 100, 180, 360), font, 'SENSITIVE' , 'sens_button', center_button_style)
-        self.plain_button = self.create_button(QtCore.QRect(310, 100, 180, 360), font, 'PLAIN', 'plain_button', center_button_style)
+        self.normal_button = self.create_button(QtCore.QRect(310, 100, 180, 360), font, 'NORMAL', 'normal_button', center_button_style)
         self.heavy_button = self.create_button(QtCore.QRect(550, 100, 180, 360), font, 'HEAVY', 'heavy_button', center_button_style)
         self.back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
         self.exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)

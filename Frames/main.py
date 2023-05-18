@@ -14,7 +14,7 @@ import threading
 import concurrent.futures
 
 recomm_flag = False
-assistant_flag = False
+assistant_flag = True
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -44,11 +44,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(self.fourth_frame)
         self.stacked_widget.addWidget(self.fifth_frame)
 
-        self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist', 'do'], 'no' : ['no', 'nope', 'not', "n't"]}
-        self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'do', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
+        self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist'], 'no' : ['no', 'nope', 'not', "n't", "dont"]}
+        self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
         self.second_frame_eval_dict = {0: ['first', 'one','sixty', '1', '60', 'less', 'hour'], 1: ['two', '2', 'second', 'less', 'hours'], 2: ['third', 'three', 'more', 'plus', 'hours', 'or']}
         self.third_frame_eval_dict = {'light': ['light', 'white', 'gray', 'soft'], 'dark': ['black', 'dark', 'heavy'], 'mixed': ['mixed', 'both']}
-        self.fourth_frame_eval_dict = {'sensitive': ['light', 'sensitive'], 'plain': ['clothes', 'plain', 'cotton'], 'heavy': ['heavy', 'jacket']}
+        self.fourth_frame_eval_dict = {'sensitive': ['light', 'sensitive'], 'normal': ['clothes', 'normal', 'plain', 'cotton'], 'heavy': ['heavy', 'jacket']}
         self.fifth_frame_eval_dict = {'small': ['small', 'little'], 'medium': ['medium'], 'large': ['large', 'lot']}
         self.back_exit_eval_dict = {'back': ['goback', 'back', 'previous', 'last', 'previousquestion', 'lastquestion'], 'exit': ['start', 'over', 'exit', 'beginning', 'startover', 'thestart']}
 
@@ -127,9 +127,11 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.first_frame.exit_button.clicked.connect(self.exit_functionality)
         self.assistant_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.first_frame.exit_button.clicked.connect(self.exit_functionality)
         self.second_frame.exit_button.clicked.connect(self.exit_functionality)
         self.third_frame.exit_button.clicked.connect(self.exit_functionality)
         self.fourth_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.fifth_frame.exit_button.clicked.connect(self.exit_functionality)
 
     def activate_back_buttons(self):
         """
@@ -137,9 +139,11 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.first_frame.back_button.clicked.connect(self.back_functionality)
         self.assistant_frame.back_button.clicked.connect(self.back_functionality)
+        self.first_frame.back_button.clicked.connect(self.back_functionality)
         self.second_frame.back_button.clicked.connect(self.back_functionality)
         self.third_frame.back_button.clicked.connect(self.back_functionality)
         self.fourth_frame.back_button.clicked.connect(self.back_functionality)
+        self.fifth_frame.back_button.clicked.connect(self.back_functionality)
 
     def starting_screen_functionality(self):
         """
@@ -155,6 +159,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.assistant_frame.yes_button.clicked.connect(self.show_first_frame)
         self.assistant_frame.no_button.clicked.connect(self.show_first_frame)
 
+    def assistant_frame_no_functionality(self):
+        
+        self.show_first_frame
+
     def first_frame_functionality(self):
         """
         Transition from first recommendation question to the next frame using the buttons.
@@ -163,8 +171,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.first_frame.my_button.clicked.connect(self.first_frame_button_functionality)
     
     def first_frame_button_functionality(self):
-        global assistant_flag
-        assistant_flag = False
+        #global assistant_flag
+        #assistant_flag = False
         self.show_second_frame()
     
     def second_frame_functionality(self):
@@ -223,10 +231,12 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.recommendation_choices.pop() if len(self.recommendation_choices) != 0 else None
         print(self.recommendation_choices)
-        print(f'Widget index: {self.current_widget_index} Difference: {self.current_widget_index - 1}')
         self.frame_dict[self.current_widget_index - 1]()
         global assistant_flag
-        self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') if assistant_flag else None
+        self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') if assistant_flag else 0
+        if (assistant_flag is False and self.current_widget_index == 1):
+            assistant_flag = True
+            self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') 
 
     def exit_functionality(self):
         """
@@ -265,31 +275,33 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def assist_client(self, prompt):
         """
-        Bind action that when assistant stops talking we start recording.
         Start saying appropriate prompt.
         """
         self.voice_assistant.speak(prompt)
+
 
     def enable_speech_rec(self):
         """
         Initiates the speech recognition process by creating a thread that captures the audio and returns a string of it.
         Calls for the response to be evaluated continues the program accordingly.
         """
-        speech_rec = Speech_Recognition()
-        speech_rec.start()
-        decoded_audio = speech_rec.join()
-        decoded_audio = ''.join(decoded_audio.lower().split())
-        back_exit_eval = self.evaluate_response(decoded_audio, True)
-        # 0 signals that neither back nor exit commands where detected
-        if back_exit_eval == '0':
-            # Evaluate clients response using the question's dictionary of evaluation
-            option_eval = self.evaluate_response(decoded_audio)
-            print('Option: ', option_eval)
-            self.assist_client('repeat') if option_eval == 'None' else self.frame_to_option_eval_dicts[self.current_widget_index](option_eval)
-        elif back_exit_eval == 'back':
-            self.back_functionality()
-        elif back_exit_eval == 'exit':
-            self.exit_functionality()
+        global assistant_flag
+        if assistant_flag:
+            speech_rec = Speech_Recognition()
+            speech_rec.start()
+            decoded_audio = speech_rec.join()
+            decoded_audio = ''.join(decoded_audio.lower().split())
+            back_exit_eval = self.evaluate_response(decoded_audio, True)
+            # 0 signals that neither back nor exit commands where detected
+            if back_exit_eval == '0':
+                # Evaluate clients response using the question's dictionary of evaluation
+                option_eval = self.evaluate_response(decoded_audio)
+                print('Option: ', option_eval)
+                self.assist_client('repeat') if option_eval == 'None' else self.frame_to_option_eval_dicts[self.current_widget_index](option_eval)
+            elif back_exit_eval == 'back':
+                self.back_functionality()
+            elif back_exit_eval == 'exit':
+                self.exit_functionality()
         
     
     def evaluate_response(self, response, back_exit_flag=False):
@@ -326,6 +338,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         global assistant_flag
         assistant_flag, prompt = (True, 'answ_1_yes') if option == 'yes' else (False, 'answ_1_no')
+        print(f'Assistant Flag: {assistant_flag}')
         assist_thr = threading.Thread(target=self.voice_assistant.speak, args=(prompt,))
         assist_thr.start()
         self.show_first_frame()

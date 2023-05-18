@@ -3,6 +3,7 @@ import whisper
 import wave
 import pyaudio
 import queue
+import winsound
 from PyQt5 import QtCore
 
 
@@ -40,9 +41,11 @@ class Speech_Recognition(QtCore.QObject, threading.Thread):
         stream = mic.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,  output_device_index=0, frames_per_buffer=CHUNK_SIZE)
         frames = []
         print('recorded started')
+        winsound.Beep(300, 300)
         for i in range(0, int(RATE / CHUNK_SIZE * SECONDS)):
             data = stream.read(CHUNK_SIZE)
             frames.append(data)
+        winsound.Beep(300, 300)
         print('recorded ended')
         stream.stop_stream()
         stream.close()
