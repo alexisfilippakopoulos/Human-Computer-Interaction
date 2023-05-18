@@ -12,7 +12,7 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 SECONDS = 5
-FILEPATH = 'input_rec.wav'
+FILEPATH = 'data/input_rec.wav'
 file_event = threading.Event()
 
 class Speech_Recognition(QtCore.QObject, threading.Thread):

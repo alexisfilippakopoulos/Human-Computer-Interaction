@@ -1,21 +1,32 @@
-import whisper
+import simpleaudio as sa
+from pydub import AudioSegment
+import time
 
-model = whisper.load_model("base")
+class Music_Player():
+    def __init__(self, filepath):
+        self.stop_flag = False
+        self.filepath = filepath
 
-# load audio and pad/trim it to fit 30 seconds
-audio = whisper.load_audio("audio.mp3")
-audio = whisper.pad_or_trim(audio)
+    def play_song(self):
+        wave_obj = sa.WaveObject.from_wave_file(self.filepath)
+        play_obj = wave_obj.play()
+        time.sleep(5)
+        # Stop the audio playback when flag is raised
+        play_obj.stop()
+        time.sleep(5)
 
-# make log-Mel spectrogram and move to the same device as the model
-mel = whisper.log_mel_spectrogram(audio).to(model.device)
+        play_obj = wave_obj.play()
+        time.sleep(5)
+        play_obj.stop()
 
-# detect the spoken language
-_, probs = model.detect_language(mel)
-print(f"Detected language: {max(probs, key=probs.get)}")
+    def stop_audio(self):
+        self.stop_flag = True
 
-# decode the audio
-options = whisper.DecodingOptions()
-result = whisper.decode(model, mel, options)
+# Path to your song file
+song_file = "data/jazz.wav"
 
-# print the recognized text
-print(result.text)
+media = Music_Player(song_file)
+media.play_song()
+
+
+# Rest of your program...

@@ -12,6 +12,8 @@ from speech_rec import Speech_Recognition
 from voice_assistant import VoiceAssistance
 import threading
 import concurrent.futures
+import simpleaudio as sa
+
 
 recomm_flag = False
 assistant_flag = True
@@ -20,6 +22,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         # Track responses to use as predictors for the recommendation
+        self.wave_obj = sa.WaveObject.from_wave_file('data/jazz.wav')
+        self.play_obj = self.wave_obj.play()
+        self.play_obj.stop()
         self.recommendation_choices = []
         self.voice_assistant = VoiceAssistance()
         self.voice_assistant.activation_signal.connect(self.decode_audio)
@@ -79,6 +84,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.current_widget_index = self.start_screen.frame_index
         self.stacked_widget.setCurrentWidget(self.start_screen)
+        self.play_obj = self.wave_obj.play()
         self.enable_face_rec()
 
     def show_assistant_frame(self):
@@ -86,6 +92,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Show second frame and disable face recognition. 
         Also make assistant say appropriate prompt.
         """
+        self.play_obj.stop()
         self.current_widget_index = self.assistant_frame.frame_index
         # Close the camera since we moved from the starting screen
         self.face_rec.detection_event.set()
