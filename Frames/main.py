@@ -60,28 +60,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self.frame_to_eval_dict = {0: self.back_exit_eval_dict, 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict, 3: self.second_frame_eval_dict , 4: self.third_frame_eval_dict, 5: self.fourth_frame_eval_dict, 6: self.fifth_frame_eval_dict}
         self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval, 3: self.second_frame_option_eval, 4 : self.third_frame_option_eval, 5: self.fourth_frame_option_eval, 6: self.fifth_frame_option_eval}
         # Create a ThreadPoolExecutor with the desired number of worker threads
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+        """executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
         # Submit the function calls to the executor for parallel execution
-        executor.submit(self.starting_screen_functionality)
-        executor.submit(self.first_frame_functionality)
-        executor.submit(self.assistant_frame_functionality)
-        executor.submit(self.second_frame_functionality)
-        executor.submit(self.third_frame_functionality)
-        executor.submit(self.fourth_frame_functionality)
-        executor.submit(self.fifth_frame_functionality)
-        executor.submit(self.activate_exit_buttons)
-        executor.submit(self.activate_back_buttons)
+        futures = [
+            executor.submit(self.starting_screen_functionality),
+            executor.submit(self.first_frame_functionality),
+            executor.submit(self.assistant_frame_functionality),
+            executor.submit(self.second_frame_functionality),
+            executor.submit(self.third_frame_functionality),
+            executor.submit(self.fourth_frame_functionality),
+            executor.submit(self.fifth_frame_functionality),
+            executor.submit(self.activate_exit_buttons),
+            executor.submit(self.activate_back_buttons)
+        ]
 
         # Wait for all tasks to complete
-        executor.shutdown()
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()  # Retrieve the result if needed
+
+        # Shutdown the executor
+        executor.shutdown()"""
+
         # set the current screen to screen 1
         threading.Thread(target=self.show_starting_frame, args=()).start()
+
+    #def initialize_functionalities(self):
+
 
     def show_starting_frame(self):
         """
         Show starting frame and enable face recognition.
         """
+        self.starting_screen_functionality()
         self.current_widget_index = self.start_screen.frame_index
         self.stacked_widget.setCurrentWidget(self.start_screen)
         self.play_obj = self.wave_obj.play()
@@ -92,6 +103,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Show second frame and disable face recognition. 
         Also make assistant say appropriate prompt.
         """
+        self.assistant_frame_functionality()
         self.play_obj.stop()
         self.current_widget_index = self.assistant_frame.frame_index
         # Close the camera since we moved from the starting screen
@@ -103,6 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Show recommendation question frame .
         """
+        self.first_frame_functionality()
         self.stacked_widget.setCurrentWidget(self.first_frame)
         self.current_widget_index = self.first_frame.frame_index
 
@@ -110,6 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Show first recommendation question frame about time.
         """
+        self.second_frame_functionality()
         self.stacked_widget.setCurrentWidget(self.second_frame)
         self.current_widget_index = self.second_frame.frame_index
 
@@ -117,14 +131,17 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Show second recommendation question frame about color.
         """
+        self.third_frame_functionality()
         self.stacked_widget.setCurrentWidget(self.third_frame)
         self.current_widget_index = self.third_frame.frame_index
 
     def show_fourth_frame(self):
+        self.fourth_frame_functionality()
         self.stacked_widget.setCurrentWidget(self.fourth_frame)
         self.current_widget_index = self.fourth_frame.frame_index
 
     def show_fifth_frame(self):
+        self.fifth_frame_functionality()
         self.stacked_widget.setCurrentWidget(self.fifth_frame)
         self.current_widget_index = self.fifth_frame.frame_index
 
@@ -186,6 +203,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Bind second frame buttons to the function defining their fucntionality.
         """
+        print('bind se lambda')
         self.second_frame.option_0.clicked.connect(lambda: self.second_frame_button_functionality('0'))
         self.second_frame.option_1.clicked.connect(lambda: self.second_frame_button_functionality('1'))
         self.second_frame.option_2.clicked.connect(lambda: self.second_frame_button_functionality('2'))
@@ -194,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Transition from third recommendation question to the next frame using the buttons and append the client's choice.
         """
+        print('ti prp na ektelestei')
         self.add_choice(option)
         self.show_third_frame()
 
@@ -213,17 +232,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_fourth_frame
 
     def fourth_frame_functionality(self):
+        print('aayayay')
         self.fourth_frame.sens_button.clicked.connect(lambda: self.fourth_frame_button_functionality('sensitive'))
-        self.fourth_frame.plain_button.clicked.connect(lambda: self.fourth_frame_button_functionality('plain'))
+        self.fourth_frame.normal_button.clicked.connect(lambda: self.fourth_frame_button_functionality('normal'))
         self.fourth_frame.heavy_button.clicked.connect(lambda: self.fourth_frame_button_functionality('heavy'))
 
     def fourth_frame_button_functionality(self, option):
         self.add_choice(f'{option}')
-        self.show_fifth_screen()
+        self.show_fifth_frame()
 
     def fifth_frame_functionality(self):
         self.fourth_frame.sens_button.clicked.connect(lambda: self.fifth_frame_button_functionality('small'))
-        self.fourth_frame.plain_button.clicked.connect(lambda: self.fifth_frame_button_functionality('medium'))
+        self.fourth_frame.normal_button.clicked.connect(lambda: self.fifth_frame_button_functionality('medium'))
         self.fourth_frame.heavy_button.clicked.connect(lambda: self.fifth_frame_button_functionality('large'))
 
     def fifth_frame_button_functionality(self, option):
