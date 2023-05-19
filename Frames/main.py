@@ -7,6 +7,10 @@ from second_frame import Second_Frame
 from third_frame import Third_Frame
 from fourth_frame import Fourth_Frame
 from fifth_frame import Fifth_Frame
+from my_cycle_hour import My_Cycle_Hour_Frame
+from my_cycle_temp import My_Cycle_Temp_Frame
+from type_frame import Type_Frame
+from timer_frame import TimerFrame
 from face_rec import Face_Recognition
 from speech_rec import Speech_Recognition
 from voice_assistant import VoiceAssistance
@@ -31,7 +35,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # create a stacked widget and set it as the central widget of the main window
         self.stacked_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
-        self.frame_dict = {0: self.show_starting_frame, 1: self.show_assistant_frame, 2: self.show_first_frame, 3: self.show_second_frame, 4: self.show_third_frame}
+        self.frame_dict = {0: self.show_starting_frame, 1: self.show_assistant_frame, 2: self.show_first_frame, 3: self.show_second_frame, 4: self.show_third_frame,
+                           5: self.show_fourth_frame, 6: self.show_fifth_frame, 7: self.show_my_cycle_hour_frame, 8: self.show_my_cycle_temp_frame, 
+                           9:self.show_my_cycle_type_frame, 10: self.show_timer_frame}
         # create the screens and add them to the stacked widget
         self.start_screen = Starting_Screen()
         self.first_frame = First_Frame()
@@ -40,7 +46,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame = Third_Frame()
         self.fourth_frame = Fourth_Frame()
         self.fifth_frame = Fifth_Frame()
-        
+        self.my_cycle_hour_frame = My_Cycle_Hour_Frame()
+        self.my_cycle_temp_frame = My_Cycle_Temp_Frame() 
+        self.my_cycle_type_frame = Type_Frame()       
         self.stacked_widget.addWidget(self.start_screen)
         self.stacked_widget.addWidget(self.assistant_frame)
         self.stacked_widget.addWidget(self.first_frame)
@@ -48,6 +56,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(self.third_frame)
         self.stacked_widget.addWidget(self.fourth_frame)
         self.stacked_widget.addWidget(self.fifth_frame)
+        self.stacked_widget.addWidget(self.my_cycle_hour_frame)
+        self.stacked_widget.addWidget(self.my_cycle_temp_frame)
+        self.stacked_widget.addWidget(self.my_cycle_type_frame)
 
         self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist'], 'no' : ['no', 'nope', 'not', "n't", "dont"]}
         self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
@@ -145,6 +156,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.setCurrentWidget(self.fifth_frame)
         self.current_widget_index = self.fifth_frame.frame_index
 
+    def show_my_cycle_hour_frame(self):
+        self.my_cycle_hour_frame_functionallity()
+        self.stacked_widget.setCurrentWidget(self.my_cycle_hour_frame)
+        self.current_widget_index = self.my_cycle_hour_frame.frame_index
+
+    def show_my_cycle_temp_frame(self):
+        self.my_cycle_temp_frame_functionallity()
+        self.stacked_widget.setCurrentWidget(self.my_cycle_temp_frame)
+        self.current_widget_index = self.my_cycle_temp_frame.frame_index
+
+    def show_my_cycle_type_frame(self):
+        self.my_cycle_type_frame_functionallity()
+        self.stacked_widget.setCurrentWidget(self.my_cycle_type_frame)
+        self.current_widget_index = self.my_cycle_type_frame.frame_index
+
+    def show_timer_frame(self):
+        if(int(self.recommendation_choices[0])<60):
+            self.timer_frame = TimerFrame(0,int(self.recommendation_choices[0]),0)
+        elif(int(self.recommendation_choices[0])==60 or int(self.recommendation_choices[0]) == 120 or int(self.recommendation_choices[0]) == 180):
+            self.timer_frame = TimerFrame(int(self.recommendation_choices[0])/60,0,0)
+        elif(int(self.recommendation_choices[0])==90):
+            self.timer_frame = TimerFrame(1,30,0)
+        self.stacked_widget.addWidget(self.timer_frame)
+        self.stacked_widget.setCurrentWidget(self.timer_frame)
+        self.current_widget_index = self.timer_frame.frame_index       
+
     def activate_exit_buttons(self):
         """
         Bind all exit buttons to their appropriate functionality.
@@ -156,6 +193,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame.exit_button.clicked.connect(self.exit_functionality)
         self.fourth_frame.exit_button.clicked.connect(self.exit_functionality)
         self.fifth_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.my_cycle_hour_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.my_cycle_temp_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.my_cycle_type_frame.exit_button.clicked.connect(self.exit_functionality)
 
     def activate_back_buttons(self):
         """
@@ -168,6 +208,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame.back_button.clicked.connect(self.back_functionality)
         self.fourth_frame.back_button.clicked.connect(self.back_functionality)
         self.fifth_frame.back_button.clicked.connect(self.back_functionality)
+        self.my_cycle_hour_frame.back_button.clicked.connect(self.back_functionality)
+        self.my_cycle_temp_frame.back_button.clicked.connect(self.back_functionality)
+        self.my_cycle_type_frame.back_button.clicked.connect(self.back_functionality)
 
     def starting_screen_functionality(self):
         """
@@ -184,7 +227,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.assistant_frame.no_button.clicked.connect(self.show_first_frame)
 
     def assistant_frame_no_functionality(self):
-        
         self.show_first_frame
 
     def first_frame_functionality(self):
@@ -192,7 +234,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Transition from first recommendation question to the next frame using the buttons.
         """
         self.first_frame.recomm_button.clicked.connect(self.first_frame_button_functionality)
-        self.first_frame.my_button.clicked.connect(self.first_frame_button_functionality)
+        self.first_frame.my_button.clicked.connect(self.show_my_cycle_hour_frame)
     
     def first_frame_button_functionality(self):
         #global assistant_flag
@@ -250,6 +292,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self.add_choice(f'{option}')
         # show screen
 
+    def my_cycle_hour_frame_functionallity(self):
+        self.my_cycle_hour_frame.option_hour_0.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("30"))
+        self.my_cycle_hour_frame.option_hour_1.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("45"))
+        self.my_cycle_hour_frame.option_hour_2.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("60"))
+        self.my_cycle_hour_frame.option_hour_3.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("90"))
+        self.my_cycle_hour_frame.option_hour_4.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("120"))
+        self.my_cycle_hour_frame.option_hour_5.clicked.connect(lambda: self.my_cycle_hour_frame_button_functionallity("180"))
+
+    def my_cycle_hour_frame_button_functionallity(self,option):
+        self.add_choice(option)
+        self.show_my_cycle_temp_frame()
+
+
+    def my_cycle_temp_frame_functionallity(self):
+        self.my_cycle_temp_frame.option_temp_0.clicked.connect(lambda: self.my_cycle_temp_frame_button_functionallity("30C"))
+        self.my_cycle_temp_frame.option_temp_1.clicked.connect(lambda: self.my_cycle_temp_frame_button_functionallity("60C"))
+        self.my_cycle_temp_frame.option_temp_2.clicked.connect(lambda: self.my_cycle_temp_frame_button_functionallity("90C"))
+
+    def my_cycle_temp_frame_button_functionallity(self,option):
+        self.add_choice(option)
+        self.show_my_cycle_type_frame()
+
+    def my_cycle_type_frame_functionallity(self):
+        self.my_cycle_type_frame.type_button_0.clicked.connect(lambda: self.my_cycle_type_frame_button_functionallity("sensitive"))
+        self.my_cycle_type_frame.type_button_1.clicked.connect(lambda: self.my_cycle_type_frame_button_functionallity("normal"))
+        self.my_cycle_type_frame.type_button_2.clicked.connect(lambda: self.my_cycle_type_frame_button_functionallity("heavy"))
+
+    def my_cycle_type_frame_button_functionallity(self,option):
+        self.add_choice(option)
+        self.show_timer_frame()
+
+
+
 
     def back_functionality(self):
         """
@@ -258,7 +333,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.recommendation_choices.pop() if len(self.recommendation_choices) != 0 else None
         print(self.recommendation_choices)
-        self.frame_dict[self.current_widget_index - 1]()
+        if(self.current_widget_index == 7):
+            self.frame_dict[2]()
+        else:
+            self.frame_dict[self.current_widget_index - 1]()
         global assistant_flag
         self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') if assistant_flag else 0
         if (assistant_flag is False and self.current_widget_index == 1):
