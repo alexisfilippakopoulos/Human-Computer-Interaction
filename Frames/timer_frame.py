@@ -1,4 +1,4 @@
-import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
 from PyQt5.QtCore import QTimer, QTime, Qt
@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QLabel
 import pygame
 
 
-class TimerFrame(QWidget):
+class TimerFrame(QWidget, QtCore.QObject):
+    timer_signal = QtCore.pyqtSignal()
     def __init__(self,hours,minutes,seconds):
         super().__init__()
         self.frame_index = 10
@@ -17,16 +18,19 @@ class TimerFrame(QWidget):
         movie_label.setFixedSize(800, 600)
         movie.start()
 
-        center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #72bcd4;}'
-        lower_button_style = 'QPushButton { border: 2px solid red; border-radius: 10px; background-color: white;}'
-
+        header_font = self.create_font('Times New Roman', 40, True, True, 75)
         font = self.create_font('Arial', 18, True, True, 75)
 
-        header = self.create_label(QtCore.QRect(270, 20, 281, 41), font, "TIME LEFT", 'header')
+        #header = self.create_label(QtCore.QRect(270, 20, 281, 41), font, "TIME LEFT", 'header')
 
+        header = self.create_label(QtCore.QRect(260, 10, 290, 100), header_font, 'EasyWash', 'header')
+        logo = self.create_label(QtCore.QRect(330, 150, 150, 150), header_font, '', 'logo')
+        pixmap = QPixmap('assets/favicon.png')
+        pixmap = pixmap.scaled(logo.size(), aspectRatioMode=True)
+        logo.setPixmap(pixmap)
 
-        timer_font = self.create_font('Arial',50,True,True,75)
-        self.label = self.create_label(QtCore.QRect(230, 250, 350, 80), timer_font,"","")
+        timer_font = self.create_font('MS Shell Dig 2', 40, False, False, 75)
+        self.label = self.create_label(QtCore.QRect(230, 380, 350, 80), timer_font,"","")
 
 
         pygame.init()
@@ -80,7 +84,7 @@ class TimerFrame(QWidget):
         if self.remaining_time == QTime(0, 0):  # Timer has reached 0
             self.timer.stop()
             pygame.mixer.music.stop()
-            QSound.play('data/alarm.wav')
+            self.timer_signal.emit()
 
     def update_label(self):
         self.label.setText(self.remaining_time.toString("hh:mm:ss"))

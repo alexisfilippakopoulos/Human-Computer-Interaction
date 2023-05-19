@@ -5,9 +5,7 @@ from PyQt5 import QtCore
 
 
 class Face_Recognition(QtCore.QObject, threading.Thread):
-
     detection_signal = QtCore.pyqtSignal()
-
     def __init__(self):
         super().__init__()
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
