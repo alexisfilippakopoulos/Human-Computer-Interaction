@@ -9,7 +9,7 @@ import pygame
 
 class TimerFrame(QWidget, QtCore.QObject):
     timer_signal = QtCore.pyqtSignal()
-    def __init__(self,hours,minutes,seconds):
+    def __init__(self):
         super().__init__()
         self.frame_index = 10
         movie = QMovie("assets\mygif.gif")
@@ -17,6 +17,7 @@ class TimerFrame(QWidget, QtCore.QObject):
         movie_label.setMovie(movie)
         movie_label.setFixedSize(800, 600)
         movie.start()
+        self.timer = QTimer()
 
         header_font = self.create_font('Times New Roman', 40, True, True, 75)
         font = self.create_font('Arial', 18, True, True, 75)
@@ -33,12 +34,13 @@ class TimerFrame(QWidget, QtCore.QObject):
         self.label = self.create_label(QtCore.QRect(230, 380, 350, 80), timer_font,"","")
 
 
+    def start_timer(self, hours, minutes, seconds):
         pygame.init()
         pygame.mixer.music.load("data/jazz.mp3")
         pygame.mixer.music.play(-1)
-        self.timer = QTimer()
+        
         self.timer.timeout.connect(self.update_timer)
-        self.remaining_time = QTime(hours,minutes,seconds)
+        self.remaining_time = QTime(hours, minutes, seconds)
         self.update_label()
         
         self.timer.start(1000)  # Timer fires every 1 second

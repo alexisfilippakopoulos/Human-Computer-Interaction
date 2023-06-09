@@ -1,5 +1,6 @@
 import pyttsx3
 from PyQt5 import QtCore
+import winsound
 
 class VoiceAssistance(QtCore.QObject):
     activation_signal = QtCore.pyqtSignal()
@@ -7,13 +8,14 @@ class VoiceAssistance(QtCore.QObject):
     def __init__(self):
         super().__init__()
         self.assistant = pyttsx3.init()
-        self.assistant.setProperty('rate', 170)
+        self.assistant.setProperty('rate', 180)
         self.assistant.setProperty('voice', self.assistant.getProperty('voices')[1].id)
         self.prompt_dict = self.load_prompts()
 
     def speak(self, prompt: str):
         self.assistant.say(self.prompt_dict[prompt])
         self.assistant.runAndWait()
+        (winsound.Beep(300, 300), self.assistant.say(self.prompt_dict['assistance']), self.assistant.runAndWait()) if prompt == 'intro' else None
         self.activation_signal.emit()
         return
 

@@ -1,11 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
 
-class Type_Frame(QtWidgets.QWidget):
+class My_Cycle_Type_Frame(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        self.frame_index = 5
+        self.frame_index = 9
         movie = QMovie("assets\mygif.gif")
         movie_label = QtWidgets.QLabel(self)
         movie_label.setMovie(movie)
@@ -17,13 +17,13 @@ class Type_Frame(QtWidgets.QWidget):
 
         font = self.create_font('Arial', 18, True, True, 75)
 
-        self.type_button_0 = self.create_button(QtCore.QRect(70, 100, 180, 360), font, 'SENSITIVE' , 'sens_button', center_button_style)
-        self.type_button_1 = self.create_button(QtCore.QRect(310, 100, 180, 360), font, 'NORMAL', 'normal_button', center_button_style)
-        self.type_button_2 = self.create_button(QtCore.QRect(550, 100, 180, 360), font, 'HEAVY', 'heavy_button', center_button_style)
+        self.type_button_0 = self.create_button(QtCore.QRect(70, 100, 180, 360), font, 'SENSITIVE' , 'my_sens_button', center_button_style)
+        self.type_button_1 = self.create_button(QtCore.QRect(310, 100, 180, 360), font, 'NORMAL', 'my_normal_button', center_button_style)
+        self.type_button_2 = self.create_button(QtCore.QRect(550, 100, 180, 360), font, 'HEAVY', 'my_heavy_button', center_button_style)
         self.back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
         self.exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
 
-        header = self.create_label(QtCore.QRect(190, 20, 461, 41), font, "PROMINENT GARMENT TYPE ?", 'header')
+        header = self.create_label(QtCore.QRect(190, 20, 461, 41), font, "PREFERED CYCLE TYPE ?", 'header')
         
         
     def create_font(self, family, size, bold: bool, italic: bool, weight):

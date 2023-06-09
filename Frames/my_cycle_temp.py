@@ -18,8 +18,8 @@ class My_Cycle_Temp_Frame(QtWidgets.QWidget):
         font = self.create_font('Arial', 18, True, True, 75)
        
         self.option_temp_0 = self.create_button(QtCore.QRect(70, 100, 180, 360), font, '30C' , '0_button', center_button_style)
-        self.option_temp_1 = self.create_button(QtCore.QRect(310, 100, 180, 360), font, '60C', '1_button', center_button_style)
-        self.option_temp_2 = self.create_button(QtCore.QRect(550, 100, 180, 360), font, '90C', '2_button', center_button_style)
+        self.option_temp_1 = self.create_button(QtCore.QRect(310, 100, 180, 360), font, '40C', '1_button', center_button_style)
+        self.option_temp_2 = self.create_button(QtCore.QRect(550, 100, 180, 360), font, '60C', '2_button', center_button_style)
 
         self.back_button = self.create_button(QtCore.QRect(70, 500, 301, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
         self.exit_button = self.create_button(QtCore.QRect(430, 500, 301, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
