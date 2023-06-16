@@ -10,9 +10,9 @@ repeat:Sorry, I did not quite catch that. Do you mind repeating your answer plea
 7_back_6:What about the size of your laundry? Is it relatively small,? medium,? or large,?
 answ_1_no:Okay then,! If you need me return to the previous window.
 answ_1_yes:Should I recommend you a cycle, or use your own?
-answ_2_no:Okay. I will walk you through choosing your own cycle. What is your desired duration of the cycle? Half an hour,? Fourty five minutes,? One hour,? An hour and a half,? Two hours,? or Three hours,?
+answ_2_no:Okay. I will walk you through choosing your own cycle. What is your desired duration? Half an hour,? Fourty five minutes,? One hour,? An hour and a half,? Two hours,? or Three hours,?
 explain_2: You can choose your own cycle settings or allow me to recommend you a cycle based on your laundry.
-answ_2_yes:Alright then, I will be asking you some questions. Please respond after the end of each question. If you want to go to the previous question, or start over, please say so. Lastly, if you need any explanation, please repeat the word explain. Now, let's Start by how much time do you have available. Less than one hour? Less than two hours? or, 3 plus hours?
+answ_2_yes:Alright then, if you need to go to the previous question, or to start over, or any further explanation please say so. Now, let's Start by how much time do you have available. Less than one hour? Less than two hours? or, 3 plus hours?
 answ_3_0:So you have less than an hour.  What is the prominent color of your laundry? Is it light,? dark,?, or mixed,?
 answ_3_1:So you have less than two hours.  What is the prominent color of your laundry? Is it light,? dark,?, or mixed,?
 answ_3_2:So time is not a problem.  What is the prominent color of your laundry? Is it light,? dark,?, or mixed,?
@@ -28,7 +28,7 @@ explain_5: Sensitive refers to materials such as silk, wool and cashmere. Normal
 answ_6_small:Small laundry! This will be quick! 
 answ_6_medium:Medium laundry! Just enough for a wash! 
 answ_6_large:Large laundry! This is the best practice!
-explain_6: It is just an estimate of your laundry, proportional to the machine's capacity.
+explain_6: It is just an estimate of your laundry's size relative to the machine's capacity.
 answ_7_30: Thirty minutes it is ! What about the temperature? Would you like thirty,? fourty,? or sixty, degrees?
 answ_7_45: Fourty five minutes it is ! What about the temperature? Would you like thirty,? fourty,? or sixty, degrees?
 answ_7_60: One hour it is ! What about the temperature? Would you like thirty,? fourty,? or sixty,?

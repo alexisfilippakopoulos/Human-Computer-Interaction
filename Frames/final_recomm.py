@@ -1,12 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QMovie
+from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon, QPainter, QColor
 
 
-class Assistant_Frame(QtWidgets.QWidget):
+class Final_Frame(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        self.frame_index = 1
+        self.frame_index = 11
         movie = QMovie("assets\mygif.gif")
         movie_label = QtWidgets.QLabel(self)
         movie_label.setMovie(movie)
@@ -16,15 +16,16 @@ class Assistant_Frame(QtWidgets.QWidget):
         center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #72bcd4;}'
         lower_button_style = 'QPushButton { border: 2px solid red; border-radius: 10px; background-color: white;}'
 
-        font = self.create_font('Arial', 18, True, True, 75)
+        self.font = self.create_font('Arial', 18, True, True, 75)
 
-        self.yes_button = self.create_button(QtCore.QRect(70, 110, 261, 360), font, 'YES' , 'yes_button', center_button_style)
-        self.no_button = self.create_button(QtCore.QRect(470, 110, 261, 360), font, 'NO', 'no_button', center_button_style)
+        self.yes_button = self.create_button(QtCore.QRect(70, 100, 251, 360), self.font, 'YES' , 'yes_button', center_button_style)
+        self.no_button = self.create_button(QtCore.QRect(470, 100, 251, 360), self.font, 'NO' , 'no_button', center_button_style)
 
-        self.back_button = self.create_button(QtCore.QRect(70, 500, 261, 61), font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
-        self.exit_button = self.create_button(QtCore.QRect(470, 500, 261, 61), font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
+        self.back_button = self.create_button(QtCore.QRect(70, 500, 261, 61), self.font, 'BACK', 'back_button', lower_button_style, 'assets/back.png', 50, 40)
+        self.exit_button = self.create_button(QtCore.QRect(470, 500, 261, 61), self.font, 'EXIT', 'exit_button', lower_button_style, 'assets/exit.png', 50, 40)
 
-        header = self.create_label(QtCore.QRect(170, 20, 480, 41), font, 'ACTIVATE VOICE ASSISTANCE ?', 'header')
+        header = self.create_label(QtCore.QRect(200, 20, 451, 41), self.font, 'START THE PROPOSED CYCLE ?', 'header')
+        #recommendation = self.create_label(QtCore.QRect(170, 130, 460, 51), font, '')
 
 
     def create_font(self, family, size, bold: bool, italic: bool, weight):
@@ -57,7 +58,6 @@ class Assistant_Frame(QtWidgets.QWidget):
         label.setObjectName(name)
         label.setStyleSheet(stylesheet)
         return label
-        
         
     
 

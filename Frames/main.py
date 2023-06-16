@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
 from start import Starting_Screen 
 from first_frame import First_Frame
@@ -14,10 +15,12 @@ from timer_frame import TimerFrame
 from face_rec import Face_Recognition
 from speech_rec import Speech_Recognition
 from voice_assistant import VoiceAssistance
+from recommender import Recommender
+from final_recomm import Final_Frame
 import threading
 import sys
 import simpleaudio as sa
-
+import time
 
 recomm_flag = False
 assistant_flag = True
@@ -31,9 +34,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.wave_obj_alarm = sa.WaveObject.from_wave_file('assets/alarm.wav')
         self.play_obj = self.wave_obj.play()
         self.play_obj.stop()
-        self.recommendation_choices = []
+        self.choices = []
+        self.recommendation = []
         self.voice_assistant = VoiceAssistance()
         self.voice_assistant.activation_signal.connect(self.decode_audio)
+        self.recommender = Recommender()
         # Create a stacked widget and set it as the central widget of the main window
         self.stacked_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
@@ -51,7 +56,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.my_cycle_hour_frame = My_Cycle_Hour_Frame()
         self.my_cycle_temp_frame = My_Cycle_Temp_Frame() 
         self.my_cycle_type_frame = My_Cycle_Type_Frame()
-        self.timer_frame = TimerFrame()    
+        self.timer_frame = TimerFrame()   
+        self.final_frame = Final_Frame() 
         self.stacked_widget.addWidget(self.start_screen)
         self.stacked_widget.addWidget(self.assistant_frame)
         self.stacked_widget.addWidget(self.first_frame)
@@ -63,8 +69,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(self.my_cycle_temp_frame)
         self.stacked_widget.addWidget(self.my_cycle_type_frame)
         self.stacked_widget.addWidget(self.timer_frame)
+        self.stacked_widget.addWidget(self.final_frame)
         # Dictionaries used to evaluate client's verbal input
-        self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist'], 'no' : ['no', 'nope', 'not', "n't", "dont"]}
+        self.assist_frame_eval_dict = {'yes' : ['yes', 'yea', 'ye', 'sure', 'help', 'assist'], 'no' : ['no', 'nope', 'not', "n't", "don't"]}
         self.first_frame_eval_dict = {'yes': ['yes', 'recommend', 'sure', 'yeah', 'yea', 'propose'], 'no' : ['no', 'nope', 'not', "n't", "don't", 'own', 'my']}
         self.second_frame_eval_dict = {0: ['first', 'one','sixty', '1', '60', 'less', 'hour'], 1: ['two', '2', 'second', 'less', 'hours'], 2: ['third', 'three', 'more', 'plus', 'hours', 'or']}
         self.third_frame_eval_dict = {'light': ['light', 'white', 'gray', 'soft'], 'dark': ['black', 'dark', 'heavy'], 'mixed': ['mixed', 'both']}
@@ -72,11 +79,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fifth_frame_eval_dict = {'small': ['small', 'little'], 'medium': ['medium'], 'large': ['large', 'lot']}
         self.mycycle_hour_eval_dict= {'30': ['thirty', 'thirtyminutes', 'half', 'halfanhour', '30'], '45': ['fourty', 'five', 'minutes', 'fourtyfiveminutes', '45'],'60': ['sixty', 'sixtyminutes', 'one', 'hour', 'anhour', '60', '1+'], '90': ['ninety', 'ninetyminutes', 'anhourandahalf', '90'], '120': ['hundred', 'twenty', 'two', 'twohours', 'hours', '120', '2'], '180': ['three', 'hours', 'threehours', 'eighty', 'hundred', '180', '3']}
         self.mycycle_temp_eval_dict = {'30': ['thirty', '30'], '40': ['fourty', '40'], '60': ['sixty', '60', '16']}
-        self.back_exit_xpln_eval_dict = {'back': ['goback', 'back', 'previous', 'last', 'previousquestion', 'lastquestion'], 'exit': ['start', 'over', 'exit', 'beginning', 'startover', 'thestart'], 'explain' : ['explain', 'analyse', 'further', 'question', 'understand']}
+        self.back_exit_xpln_eval_dict = {'back': ['goback', 'back', 'previous', 'last', 'previousquestion', 'lastquestion'], 'exit': ['start', 'over', 'exit', 'beginning', 'startover', 'thestart'], 'explain' : ['explain', 'analyse', 'further', 'question', 'understand', 'explanation']}
         self.mycycle_type_eval_dict = {'sensitive': 'sensitive', 'normal': 'normal', 'heavy': 'heavy'}
         # Dictionaries used to associate current frame with appropriate evaluation
-        self.frame_to_eval_dict = {0: self.back_exit_xpln_eval_dict, 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict, 3: self.second_frame_eval_dict , 4: self.third_frame_eval_dict, 5: self.fourth_frame_eval_dict, 6: self.fifth_frame_eval_dict, 7: self.mycycle_hour_eval_dict, 8: self.mycycle_temp_eval_dict, 9: self.mycycle_type_eval_dict}
-        self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval, 3: self.second_frame_option_eval, 4 : self.third_frame_option_eval, 5: self.fourth_frame_option_eval, 6: self.fifth_frame_option_eval, 7: self.mycycle_hour_option_eval, 8: self.mycycle_temp_option_eval, 9: self.mycycle_type_option_eval}
+        self.frame_to_eval_dict = {0: self.back_exit_xpln_eval_dict, 1 : self.assist_frame_eval_dict, 2 : self.first_frame_eval_dict, 3: self.second_frame_eval_dict , 4: self.third_frame_eval_dict, 5: self.fourth_frame_eval_dict, 6: self.fifth_frame_eval_dict, 7: self.mycycle_hour_eval_dict, 8: self.mycycle_temp_eval_dict, 9: self.mycycle_type_eval_dict, 11: self.assist_frame_eval_dict}
+        self.frame_to_option_eval_dicts = {1 : self.assistant_frame_option_eval, 2 : self.first_frame_option_eval, 3: self.second_frame_option_eval, 4 : self.third_frame_option_eval, 5: self.fourth_frame_option_eval, 6: self.fifth_frame_option_eval, 7: self.mycycle_hour_option_eval, 8: self.mycycle_temp_option_eval, 9: self.mycycle_type_option_eval, 11: self.final_frame_option_eval}
         # Go to the starting frame
         threading.Thread(target=self.show_starting_frame, args=()).start()
 
@@ -145,6 +152,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stacked_widget.setCurrentWidget(self.fifth_frame)
         self.current_widget_index = self.fifth_frame.frame_index
 
+    def show_final_frame(self):
+        global assistant_flag
+        self.final_frame_functionality()
+        self.stacked_widget.setCurrentWidget(self.final_frame)
+        self.current_widget_index = self.final_frame.frame_index
+        prompt = f"Based on your answers, i would recommend {self.recommendation[0]} minutes, {self.recommendation[1]} degrees and a {self.recommendation[2]} cycle. Should i proceed to start this cycle?"
+        time.sleep(4.5)
+        threading.Thread(target=self.voice_assistant.speak, args=(prompt, True, True)).start()
+
     def show_my_cycle_hour_frame(self):
         """
         Show my cycle time presets frame, change indexes.
@@ -170,11 +186,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.current_widget_index = self.my_cycle_type_frame.frame_index
 
     def show_timer_frame(self):
-        """if(int(self.recommendation_choices[0])<60):
-            self.timer_frame = TimerFrame(0,int(self.recommendation_choices[0]),0)
-        elif(int(self.recommendation_choices[0])==60 or int(self.recommendation_choices[0]) == 120 or int(self.recommendation_choices[0]) == 180):
-            self.timer_frame = TimerFrame(int(self.recommendation_choices[0])/60,0,0)
-        elif(int(self.recommendation_choices[0])==90):
+        """if(int(self.choices[0])<60):
+            self.timer_frame = TimerFrame(0,int(self.choices[0]),0)
+        elif(int(self.choices[0])==60 or int(self.choices[0]) == 120 or int(self.choices[0]) == 180):
+            self.timer_frame = TimerFrame(int(self.choices[0])/60,0,0)
+        elif(int(self.choices[0])==90):
             self.timer_frame = TimerFrame(1,30,0)"""
         self.timer_frame.start_timer(0, 0, 20)
         self.timer_frame.timer_signal.connect(self.timer_frame_functionality)
@@ -193,6 +209,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame.exit_button.clicked.connect(self.exit_functionality)
         self.fourth_frame.exit_button.clicked.connect(self.exit_functionality)
         self.fifth_frame.exit_button.clicked.connect(self.exit_functionality)
+        self.final_frame.exit_button.clicked.connect(self.exit_functionality)
         self.my_cycle_hour_frame.exit_button.clicked.connect(self.exit_functionality)
         self.my_cycle_temp_frame.exit_button.clicked.connect(self.exit_functionality)
         self.my_cycle_type_frame.exit_button.clicked.connect(self.exit_functionality)
@@ -208,6 +225,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.third_frame.back_button.clicked.connect(self.back_functionality)
         self.fourth_frame.back_button.clicked.connect(self.back_functionality)
         self.fifth_frame.back_button.clicked.connect(self.back_functionality)
+        self.final_frame.back_button.clicked.connect(self.back_functionality)
         self.my_cycle_hour_frame.back_button.clicked.connect(self.back_functionality)
         self.my_cycle_temp_frame.back_button.clicked.connect(self.back_functionality)
         self.my_cycle_type_frame.back_button.clicked.connect(self.back_functionality)
@@ -274,17 +292,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.add_choice(f'{option}')
         self.show_fifth_frame()
 
+    def final_frame_functionality(self):
+        self.final_frame.yes_button.clicked.connect(lambda: self.final_frame_button_functionality('yes'))
+        self.final_frame.no_button.clicked.connect(lambda: self.final_frame_button_functionality('no'))
+
+    def final_frame_button_functionality(self, option):
+        self.show_timer_frame() if option == 'yes' else self.exit_functionality()
+
     def fifth_frame_functionality(self):
-        self.fourth_frame.sens_button.clicked.connect(lambda: self.fifth_frame_button_functionality('small'))
-        self.fourth_frame.normal_button.clicked.connect(lambda: self.fifth_frame_button_functionality('medium'))
-        self.fourth_frame.heavy_button.clicked.connect(lambda: self.fifth_frame_button_functionality('large'))
+        self.fifth_frame.small_button.clicked.connect(lambda: self.fifth_frame_button_functionality('small'))
+        self.fifth_frame.med_button.clicked.connect(lambda: self.fifth_frame_button_functionality('medium'))
+        self.fifth_frame.large_button.clicked.connect(lambda: self.fifth_frame_button_functionality('large'))
 
     def fifth_frame_button_functionality(self, option):
         """
         Transition from last recommendation question to the next frame using the buttons and append the client's choice.
         """
         self.add_choice(f'{option}')
-        # show frame
+        self.recommendation = self.recommender.recommend(f"recommend({self.choices[0]}, {self.choices[1]}, {self.choices[2]}, {self.choices[3]}, Recommendation)")
+        print(self.recommendation)
+        self.show_final_frame()
 
     def my_cycle_hour_frame_functionallity(self):
         """
@@ -339,9 +366,9 @@ class MainWindow(QtWidgets.QMainWindow):
         Back button fucntionality.
         Remove last choice and show previous frame.
         """
-        self.recommendation_choices.pop() if len(self.recommendation_choices) != 0 else None
+        self.choices.pop() if len(self.choices) != 0 else None
         #print(f'Current Index: {self.current_widget_index}')
-        #print(self.recommendation_choices)
+        #print(self.choices)
         self.frame_dict[2]() if(self.current_widget_index == 7) else (print('Paei edw: ', self.current_widget_index - 1), self.frame_dict[self.current_widget_index - 1]())
         global assistant_flag
         self.assist_client(f'{self.current_widget_index + 1}_back_{self.current_widget_index}') if assistant_flag else 0
@@ -355,8 +382,8 @@ class MainWindow(QtWidgets.QMainWindow):
         Clear client's choices and show starting frame.
         """
         # Clear the list and show starting screen
-        self.recommendation_choices.clear()
-        print(self.recommendation_choices)
+        self.choices.clear()
+        print(self.choices)
         self.show_starting_frame()
         #threading.Thread(target=self.show_starting_frame, args=()).start()
 
@@ -365,9 +392,9 @@ class MainWindow(QtWidgets.QMainWindow):
         Add client's current choice to a list with his 
         previous ones.
         """
-        if choice not in self.recommendation_choices:
-            self.recommendation_choices.append(choice) 
-        print(self.recommendation_choices)
+        if choice not in self.choices:
+            self.choices.append(choice) 
+        print(self.choices)
 
     def decode_audio(self):
         """
@@ -406,8 +433,9 @@ class MainWindow(QtWidgets.QMainWindow):
             speech_rec = Speech_Recognition()
             speech_rec.start()
             decoded_audio = speech_rec.join()
-            print('Captured Audio', decoded_audio)
+            #print('Captured Audio', decoded_audio)
             decoded_audio = ''.join(decoded_audio.lower().split())
+            print(decoded_audio)
             command_eval = self.evaluate_for_commands(decoded_audio)
             print('Command: ', command_eval)
             # 0 signals that neither back nor exit commands where detected
@@ -440,7 +468,6 @@ class MainWindow(QtWidgets.QMainWindow):
             matches[key] = matched_words
             print(f'Command: {key} Matched Words: {matched_words}')
             option = max(matches, key=matches.get) if not all(value == 0 for value in matches.values()) else option
-            #option = matches if matched_words > 0 else option
         return option
         
     
@@ -508,8 +535,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fifth_frame_option_eval(self, option):
         self.add_choice(f'{option}')
-        threading.Thread(target=self.voice_assistant.speak, args=(f'answ_6_{option}',)).start()
-        # NA valw screen of smth  
+        threading.Thread(target=self.voice_assistant.speak, args=(f'answ_6_{option}', False, False)).start()
+        self.recommendation = self.recommender.recommend(f"recommend({self.choices[0]}, {self.choices[1]}, {self.choices[2]}, {self.choices[3]}, Recommendation)")
+        self.show_final_frame() 
 
     def mycycle_hour_option_eval(self, option):
         self.add_choice(option)  
@@ -523,15 +551,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mycycle_type_option_eval(self, option):
         self.add_choice(option)
-        print('ayooooo')
         threading.Thread(target=self.voice_assistant.speak, args=(f'answ_9_{option}',)).start() 
         self.show_timer_frame()
 
+    def final_frame_option_eval(self, option):
+        if option == 'yes':
+            prompt = f'Great ! See you in {self.recommendation[0]} minutes, when the cycle will have finished !'
+            threading.Thread(target=self.voice_assistant.speak, args=(prompt, True, False)).start()
+            self.show_timer_frame()
+        else:
+            prompt = f'I am sorry. I will restart the process then. If you have something specific in mind you can choose to use your own cycle.'
+            threading.Thread(target=self.voice_assistant.speak, args=(prompt, True, False)).start()
+            self.exit_functionality()
+
 if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
+    app = QtWidgets.QApplication([sys.argv])
     app.setApplicationDisplayName('EasyWash')  # Set the display name
     app.setWindowIcon(QIcon('assets/favicon.png'))  # Set the icon
     window = MainWindow()
     window.resize(800, 600)
     window.show()
-    app.exec_()
+    sys.exit(app.exec_())

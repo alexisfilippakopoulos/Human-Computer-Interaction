@@ -1,9 +1,7 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
+from PyQt5.QtGui import QPixmap, QMovie
 from PyQt5.QtCore import QTimer, QTime, Qt
-from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QLabel
+from PyQt5.QtWidgets import QWidget
 import pygame
 
 

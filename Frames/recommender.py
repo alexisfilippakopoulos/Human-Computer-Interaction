@@ -1,6 +1,5 @@
 from pyswip import Prolog
 
-
 class Recommender():
     def __init__(self):
         self.knowledge_base = Prolog()
