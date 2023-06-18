@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon, QPainter, QColor
+from PyQt5.QtGui import QMovie
 
 
 class Assistant_Frame(QtWidgets.QWidget):

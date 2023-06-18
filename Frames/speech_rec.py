@@ -11,7 +11,7 @@ CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
-SECONDS = 5
+SECONDS = 3.5
 FILEPATH = 'data/input_rec.wav'
 file_event = threading.Event()
 
@@ -45,7 +45,7 @@ class Speech_Recognition(QtCore.QObject, threading.Thread):
         for i in range(0, int(RATE / CHUNK_SIZE * SECONDS)):
             data = stream.read(CHUNK_SIZE)
             frames.append(data)
-        winsound.Beep(300, 300)
+        winsound.Beep(300, 200)
         print('recorded ended')
         stream.stop_stream()
         stream.close()

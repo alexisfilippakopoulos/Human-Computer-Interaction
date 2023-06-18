@@ -1,15 +1,13 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QMovie, QCursor, QIcon
-from PyQt5.QtCore import QTimer, QTime, Qt
-from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QLabel
+from PyQt5.QtGui import QPixmap, QMovie
+from PyQt5.QtCore import QTimer, QTime, Qt, QMetaObject
+from PyQt5.QtWidgets import QWidget
 import pygame
 
 
 class TimerFrame(QWidget, QtCore.QObject):
     timer_signal = QtCore.pyqtSignal()
-    def __init__(self,hours,minutes,seconds):
+    def __init__(self):
         super().__init__()
         self.frame_index = 10
         movie = QMovie("assets\mygif.gif")
@@ -17,6 +15,8 @@ class TimerFrame(QWidget, QtCore.QObject):
         movie_label.setMovie(movie)
         movie_label.setFixedSize(800, 600)
         movie.start()
+
+        self.timer = QTimer()
 
         header_font = self.create_font('Times New Roman', 40, True, True, 75)
         font = self.create_font('Arial', 18, True, True, 75)
@@ -33,15 +33,17 @@ class TimerFrame(QWidget, QtCore.QObject):
         self.label = self.create_label(QtCore.QRect(230, 380, 350, 80), timer_font,"","")
 
 
+    def start_timer(self, hours, minutes, seconds):
         pygame.init()
         pygame.mixer.music.load("data/jazz.mp3")
         pygame.mixer.music.play(-1)
-        self.timer = QTimer()
+
         self.timer.timeout.connect(self.update_timer)
-        self.remaining_time = QTime(hours,minutes,seconds)
+        self.remaining_time = QTime(hours, minutes, seconds)
         self.update_label()
-        
-        self.timer.start(1000)  # Timer fires every 1 second
+
+        # Start the timer indirectly from the main thread
+        QMetaObject.invokeMethod(self.timer, "start", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(int, 1000))
 
         
     def create_font(self, family, size, bold: bool, italic: bool, weight):

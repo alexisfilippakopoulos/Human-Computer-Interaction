@@ -10,6 +10,7 @@ class Face_Recognition(QtCore.QObject, threading.Thread):
         super().__init__()
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        # Keep track of frames detected
         self.detected_counter = 0
         self.cap = cv2.VideoCapture(0)
         self.detection_event = threading.Event()
@@ -21,7 +22,9 @@ class Face_Recognition(QtCore.QObject, threading.Thread):
             faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
             for (fx, fy, fw, fh) in faces:
                 eyes = self.eye_cascade.detectMultiScale(gray[fy:fy + fw, fx:fx + fw], 1.3, 5)
-
+                
+            
+            
             if len(faces) >= 1 and len(eyes) >= 2:
                 #print(self.detected_counter)
                 self.detected_counter += 1
