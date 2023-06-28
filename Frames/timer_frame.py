@@ -2,7 +2,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QMovie
 from PyQt5.QtCore import QTimer, QTime, Qt, QMetaObject
 from PyQt5.QtWidgets import QWidget
-import pygame
 
 
 class TimerFrame(QWidget, QtCore.QObject):
@@ -34,14 +33,9 @@ class TimerFrame(QWidget, QtCore.QObject):
 
 
     def start_timer(self, hours, minutes, seconds):
-        pygame.init()
-        pygame.mixer.music.load("data/jazz.mp3")
-        pygame.mixer.music.play(-1)
-
         self.timer.timeout.connect(self.update_timer)
         self.remaining_time = QTime(hours, minutes, seconds)
         self.update_label()
-
         # Start the timer indirectly from the main thread
         QMetaObject.invokeMethod(self.timer, "start", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(int, 1000))
 
@@ -82,10 +76,8 @@ class TimerFrame(QWidget, QtCore.QObject):
     def update_timer(self):
         self.remaining_time = self.remaining_time.addSecs(-1)  # Decrement the time by 1 second
         self.update_label()
-        
         if self.remaining_time == QTime(0, 0):  # Timer has reached 0
             self.timer.stop()
-            pygame.mixer.music.stop()
             self.timer_signal.emit()
 
     def update_label(self):

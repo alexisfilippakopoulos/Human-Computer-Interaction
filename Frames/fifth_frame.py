@@ -12,7 +12,7 @@ class Fifth_Frame(QtWidgets.QWidget):
         movie_label.setFixedSize(800, 600)
         movie.start()
 
-        center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #72bcd4;}'
+        center_button_style = 'QPushButton { border: 2px solid black; border-radius: 10px; background-color: #F0F8FF;}'
         lower_button_style = 'QPushButton { border: 2px solid red; border-radius: 10px; background-color: white;}'
 
         font = self.create_font('Arial', 18, True, True, 75)

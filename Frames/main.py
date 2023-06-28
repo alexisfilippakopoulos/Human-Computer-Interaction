@@ -30,10 +30,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         # Track responses to use as predictors for the recommendation
-        self.wave_obj = sa.WaveObject.from_wave_file('assets/jazz.wav')
-        self.wave_obj_alarm = sa.WaveObject.from_wave_file('assets/alarm.wav')
-        self.play_obj = self.wave_obj.play()
-        self.play_obj.stop()
+        self.offline_music = sa.WaveObject.from_wave_file('assets/jazz.wav')
+        self.cycle_music = sa.WaveObject.from_wave_file('assets/Butter.wav')
+        self.timer_music = sa.WaveObject.from_wave_file('assets/alarm.wav')
+        self.offline_player = self.offline_music.play()
+        self.offline_player.stop()
+        self.cycle_player = self.offline_music.play()
+        self.cycle_player.stop()
         self.choices = []
         self.recommendation = []
         self.voice_assistant = VoiceAssistance()
@@ -97,7 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.activate_exit_buttons()
         self.current_widget_index = self.start_screen.frame_index
         self.stacked_widget.setCurrentWidget(self.start_screen)
-        self.play_obj = self.wave_obj.play()
+        self.offline_player = self.offline_music.play()
         self.enable_face_rec()
 
     def show_assistant_frame(self):
@@ -105,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Show second frame, disable face recognition, activate assistant. 
         """
         self.assistant_frame_functionality()
-        self.play_obj.stop()
+        self.offline_player.stop()
         self.current_widget_index = self.assistant_frame.frame_index
         # Close the camera since we moved from the starting screen
         self.face_rec.detection_event.set()
@@ -186,14 +189,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.current_widget_index = self.my_cycle_type_frame.frame_index
 
     def show_timer_frame(self):
-        """if(int(self.choices[0])<60):
-            self.timer_frame = TimerFrame(0,int(self.choices[0]),0)
-        elif(int(self.choices[0])==60 or int(self.choices[0]) == 120 or int(self.choices[0]) == 180):
-            self.timer_frame = TimerFrame(int(self.choices[0])/60,0,0)
-        elif(int(self.choices[0])==90):
-            self.timer_frame = TimerFrame(1,30,0)"""
-        
-        self.timer_frame.start_timer(0, 0, 20)   
+        self.cycle_player = self.cycle_music.play()  
+        self.timer_frame.start_timer(0, 0, 20) 
         self.timer_frame.timer_signal.connect(self.timer_frame_functionality)
         self.stacked_widget.addWidget(self.timer_frame)
         self.stacked_widget.setCurrentWidget(self.timer_frame)
@@ -354,13 +351,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_timer_frame()
 
     def timer_frame_functionality(self):
-        #Kanei beep, deixnei allo screan p leei oti telos screen, enable camera kai molis pas apo panw kleinei
         global end_face_flag
+        self.cycle_player.stop()
         end_face_flag = True
         self.enable_face_rec()
         self.current_widget_index = self.start_screen.frame_index
         self.stacked_widget.setCurrentWidget(self.start_screen)
-        self.wave_obj_alarm.play()
+        self.timer_music.play()
 
     def back_functionality(self):
         """
@@ -551,6 +548,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_my_cycle_type_frame()
 
     def mycycle_type_option_eval(self, option):
+        global assistant_flag
+        assistant_flag = False
         self.add_choice(option)
         threading.Thread(target=self.voice_assistant.speak, args=(f'answ_9_{option}',)).start() 
         self.show_timer_frame()
